@@ -1,4 +1,4 @@
-Use database;
+Use {database};
 
 DROP TABLE IF EXISTS {Tablename};
 
