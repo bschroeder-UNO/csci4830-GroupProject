@@ -22,7 +22,6 @@ INDEX VERSION 1.134+C:\Users\base_\Documents\GitHub\csci4830-GroupProject\worksp
 2393695380.index
 1241628586.index
 681077179.index
-3161943490.index
 3273785869.index
 2244046768.index
 663379868.index

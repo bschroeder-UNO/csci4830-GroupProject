@@ -18,15 +18,14 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/ServerQuery")
 public class ServerQuery extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	//GET TABLE NAME:
-    static String url = "jdbc:mysql://ec2-52-14-183-34.us-east-2.compute.amazonaws.com/SPEARMINT";
-    static String user = "bschroeder";
-    static String password = "csci";
+    //static String url = "jdbc:mysql://ec2-52-14-183-34.us-east-2.compute.amazonaws.com/SPEARMINT";
+    //static String user = "bschroeder";
+    //static String password = "csci";
     
     //Use in debugging:
-    //static String url = "jdbc:mysql://ec2-52-14-191-24.us-east-2.compute.amazonaws.com:3306/myDBSchroeder";
-    //static String user = "bschroeder_remote";
-    //static String password = "csci4830";
+    static String url = "jdbc:mysql://ec2-52-14-191-24.us-east-2.compute.amazonaws.com:3306/myDBSchroeder";
+    static String user = "bschroeder_remote";
+    static String password = "csci4830";
     
     
     static Connection connection = null;
