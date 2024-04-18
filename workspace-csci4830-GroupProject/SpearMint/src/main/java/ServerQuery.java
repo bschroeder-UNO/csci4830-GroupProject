@@ -137,7 +137,7 @@ public class ServerQuery extends HttpServlet {
 			String amount = row[2];
 			String transType = row[3];
 			String location = row[4];
-			String insertSQL = "INSERT INTO Account_1 (id, FIRST_NAME, LAST_NAME, TRANS_AMT, LOCATION) values (default, ?, ?, ?, ?)";
+			String insertSQL = "INSERT INTO Account_1 (id, FIRST_NAME, LAST_NAME, TRANS_AMT, TRANS_TYPE, LOCATION) values (default, ?, ?, ?, ?, ?)";
 			try {
 				connection = null;
 				//response.getWriter().println("-------- MySQL JDBC Connection Testing ------------<br>");
