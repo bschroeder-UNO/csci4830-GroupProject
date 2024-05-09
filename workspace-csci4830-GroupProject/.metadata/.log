@@ -3250,3 +3250,6 @@ java.lang.IllegalStateException: Conflicting handlers: {[ActionHandler(org.eclip
 	at org.eclipse.equinox.launcher.Main.invokeFramework(Main.java:651)
 	at org.eclipse.equinox.launcher.Main.basicRun(Main.java:588)
 	at org.eclipse.equinox.launcher.Main.run(Main.java:1459)
+
+!ENTRY org.eclipse.wst.server.core 4 0 2024-04-18 18:49:07.376
+!MESSAGE Server Tomcat v9.0 Server at localhost failed to start.
