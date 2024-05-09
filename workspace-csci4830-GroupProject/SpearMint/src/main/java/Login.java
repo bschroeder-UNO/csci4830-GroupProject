@@ -76,6 +76,7 @@ public class Login extends HttpServlet {
 		        out.println("Password: <input type='password' name='password'><br>");
 		        out.println("<input type='submit' value='Login'>");
 		        out.println("</form>");
+		        out.println("<a href='CreateAccount'>Create Account</a>");
 	        } else {
 	        	HttpSession session = request.getSession();
 	        	session.setAttribute("username", username);
@@ -89,6 +90,7 @@ public class Login extends HttpServlet {
 	        out.println("Password: <input type='password' name='password'><br>");
 	        out.println("<input type='submit' value='Login'>");
 	        out.println("</form>");
+	        out.println("<a href='CreateAccount'>Create Account</a>");
 	    }
 
 	    out.println("</body>");

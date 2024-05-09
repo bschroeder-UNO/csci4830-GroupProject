@@ -32,13 +32,13 @@ public class Home extends HttpServlet {
 		// TODO Auto-generated method stub
 		HttpSession session = request.getSession();
 	    String username = (String) session.getAttribute("username");
-
 	    response.setContentType("text/html");
 	    PrintWriter out = response.getWriter();
 	    out.println("<html><head><title>Home</title></head><body>");
 	    out.println("<h2>Welcome, " + username + "</h2>");
+	    out.println("<a href='Login'>Logout</a>");
 	    out.println("</body></html>");
-		response.getWriter().append("Served at: ").append(request.getContextPath());
+		//response.getWriter().append("Served at: ").append(request.getContextPath());
 	}
 
 	/**
