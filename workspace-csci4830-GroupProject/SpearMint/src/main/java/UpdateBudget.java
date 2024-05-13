@@ -1,40 +1,90 @@
+import java.io.*;
+import javax.servlet.*;
+import javax.servlet.http.*;
+import java.sql.*;
 
-
-import java.io.IOException;
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-/**
- * Servlet implementation class UpdateBudget
- */
-@WebServlet("/UpdateBudget")
 public class UpdateBudget extends HttpServlet {
-	private static final long serialVersionUID = 1L;
 
-    /**
-     * Default constructor. 
-     */
-    public UpdateBudget() {
-        // TODO Auto-generated constructor stub
+    // JDBC URL, username, and password of MySQL server
+    private static final String JDBC_URL = "jdbc:mysql://localhost:3306/your_database";
+    private static final String JDBC_USER = "your_username";
+    private static final String JDBC_PASSWORD = "your_password";
+
+    // Method to get the current budget from the database
+    private double getCurrentBudget() throws SQLException {
+        double budget = 0.0;
+        try (Connection connection = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD)) {
+            String query = "SELECT budget FROM client_budget WHERE client_id = ?";
+            try (PreparedStatement statement = connection.prepareStatement(query)) {
+                statement.setInt(1, getClientId()); // You need to implement getClientId() method
+                try (ResultSet resultSet = statement.executeQuery()) {
+                    if (resultSet.next()) {
+                        budget = resultSet.getDouble("budget");
+                    }
+                }
+            }
+        }
+        return budget;
     }
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		response.getWriter().append("Served at: ").append(request.getContextPath());
-	}
+    // Method to update the budget by adding or subtracting amounts
+    private void updateBudget(double amount) throws SQLException {
+        try (Connection connection = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD)) {
+            String query = "UPDATE client_budget SET budget = budget + ? WHERE client_id = ?";
+            try (PreparedStatement statement = connection.prepareStatement(query)) {
+                statement.setDouble(1, amount);
+                statement.setInt(2, getClientId()); // You need to implement getClientId() method
+                statement.executeUpdate();
+            }
+        }
+    }
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		doGet(request, response);
-	}
+    // Method to initialize the budget if no data exists in the table
+    private void initializeBudget() throws SQLException {
+        try (Connection connection = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD)) {
+            String query = "INSERT INTO client_budget (client_id, budget) VALUES (?, ?)";
+            try (PreparedStatement statement = connection.prepareStatement(query)) {
+                statement.setInt(1, getClientId()); // You need to implement getClientId() method
+                statement.setDouble(2, 0.0);
+                statement.executeUpdate();
+            }
+        }
+    }
 
+    // Method to get the client ID (You need to implement this according to your application)
+    private int getClientId() {
+        // Implement according to your application logic
+        return 1; // For example, return a hardcoded client ID for now
+    }
+
+    // Servlet POST method to handle adding/subtracting from the budget
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        double amount = Double.parseDouble(request.getParameter("amount"));
+        String operation = request.getParameter("operation");
+
+        try {
+            if (operation.equals("add")) {
+                updateBudget(amount);
+            } else if (operation.equals("subtract")) {
+                updateBudget(-amount);
+            }
+            response.getWriter().println("Budget updated successfully!");
+        } catch (SQLException e) {
+            e.printStackTrace();
+            response.getWriter().println("Error updating budget: " + e.getMessage());
+        }
+    }
+
+    // Servlet initialization method
+    public void init() throws ServletException {
+        try {
+            // Check if data exists in the table, if not, initialize the budget
+            if (getCurrentBudget() == 0.0) {
+                initializeBudget();
+            }
+        } catch (SQLException e) {
+            throw new ServletException("Error initializing budget: " + e.getMessage());
+        }
+    }
 }
