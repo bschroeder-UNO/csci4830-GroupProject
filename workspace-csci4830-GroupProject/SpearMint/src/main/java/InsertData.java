@@ -34,9 +34,10 @@ public class InsertData extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         // Retrieve form parameters
-        String name = request.getParameter("name");
-        String email = request.getParameter("email");
-        String phone = request.getParameter("phone");
+    	 String location = request.getParameter("location");
+         float amount = Float.parseFloat(request.getParameter("amount"));
+         String date = request.getParameter("date");
+         String type = request.getParameter("type");
 
         // JDBC variables
         Connection conn = null;
@@ -44,18 +45,19 @@ public class InsertData extends HttpServlet {
 
         try {
             // Connect to the database
-            Class.forName("com.mysql.jdbc.Driver");
+            Class.forName("jdbc:mysql://ec2-52-14-191-24.us-east-2.compute.amazonaws.com:3306/SPEARMINT");
             conn = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD);
 
             // Prepare SQL statement
-            String sql = "INSERT INTO table_name (name, email, phone) VALUES (?, ?, ?)";
+            String sql = "INSERT INTO table_name (location, amount, date, type) VALUES (?, ?, ?, ?)";
             pstmt = conn.prepareStatement(sql);
 
             // Set parameters
-            pstmt.setString(1, name);
-            pstmt.setString(2, email);
-            pstmt.setString(3, phone);
-
+            pstmt.setString(1, location);
+            pstmt.setString(2, amount);
+            pstmt.setString(3, date);
+            pstmt.setString(4, type);
+            
             // Execute the SQL statement
             pstmt.executeUpdate();
 
