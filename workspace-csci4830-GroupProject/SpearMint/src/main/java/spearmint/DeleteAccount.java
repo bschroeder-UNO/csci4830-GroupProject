@@ -2,6 +2,13 @@ package spearmint;
 
 
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -25,21 +32,99 @@ public class DeleteAccount extends HttpServlet {
         super();
         // TODO Auto-generated constructor stub
     }
+    
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String htmlResponse = "<!DOCTYPE html>"
+            + "<html><head><title>Delete Account</title>"
+            + "<script type=\"text/javascript\">"+ "function confirmDeletion() {"
+            + "return confirm('Are you sure you want to delete this account?');}"
+            + "</script></head><body><h2>Delete Account</h2>"
+            + "<form action=\"DeleteAccount\" method=\"post\" onsubmit=\"return confirmDeletion();\">"
+            + "<label for=\"userId\">User ID:</label>"
+            + "<input type=\"text\" id=\"userId\" name=\"userId\" required>"
+            + "<input type=\"submit\" value=\"Delete Account\">"
+            + "</form></body></html>";
+        response.setContentType("text/html");
+        response.getWriter().write(htmlResponse);
+    }
 
 	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		response.getWriter().append("Served at: ").append(request.getContextPath());
-	}
+     * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+     */
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String userIdStr = request.getParameter("userId");
+        if (userIdStr == null || userIdStr.isEmpty()) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().write("User ID is required");
+            return;
+        }
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		doGet(request, response);
-	}
+        int userId = Integer.parseInt(userIdStr);
+        try {
+            if (deleteUserAndTransactionTable(userId)) {
+                response.setStatus(HttpServletResponse.SC_OK);
+                response.getWriter().write("Account deleted successfully");
+            } else {
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                response.getWriter().write("Account deletion failed");
+            }
+        } catch (SQLException e) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getWriter().write("Error during account deletion: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
 
+    private boolean deleteUserAndTransactionTable(int userId) throws SQLException {
+        String username = getUsername(userId);
+        if (username == null) {
+            return false; // User not found
+        }
+
+        try (Connection connection = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD)) {
+            connection.setAutoCommit(false); // Start transaction
+
+            boolean userDeleted = deleteUser(connection, userId);
+            boolean tableDropped = deleteTransactionTable(connection, username);
+
+            if (userDeleted && tableDropped) {
+                connection.commit(); // Commit transaction
+                return true;
+            } else {
+                connection.rollback(); // Rollback transaction on failure
+                return false;
+            }
+        }
+    }
+
+    private String getUsername(int userId) throws SQLException {
+        String query = "SELECT username FROM users WHERE id = ?";
+        try (Connection connection = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD);
+             PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setInt(1, userId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("username");
+                }
+            }
+        }
+        return null;
+    }
+
+    private boolean deleteUser(Connection connection, int userId) throws SQLException {
+        String query = "DELETE FROM users WHERE id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setInt(1, userId);
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0;
+        }
+    }
+
+    private boolean deleteTransactionTable(Connection connection, String username) throws SQLException {
+        String query = "DROP TABLE IF EXISTS transactions_" + username;
+        try (Statement stmt = connection.createStatement()) {
+            stmt.executeUpdate(query);
+            return true;
+        }
+    }
 }

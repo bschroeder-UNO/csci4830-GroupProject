@@ -78,7 +78,7 @@ public class CreateAccount extends HttpServlet {
 				// Insert username and password into users table
 				if (insertUser(username, password)) {
 					int userId = getUserId(username);
-					if (userId != -1 && createTransactionTable(userId)) {
+					if (userId != -1 && createTransactionTable(username)) {
 						out.println("<p>Account created successfully.</p>");
 						// Redirect to login page
 						out.println("<a href='Login'>Login</a>");
@@ -147,8 +147,8 @@ public class CreateAccount extends HttpServlet {
 		return -1; // User not found
 	}
 
-	public boolean createTransactionTable(int userId) {
-		String tableName = "transactions_" + userId;
+	public boolean createTransactionTable(String username) {
+		String tableName = "transactions_" + username;
 		try (Connection connection = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD);
 				Statement statement = connection.createStatement()) {
 			String createTableQuery = "CREATE TABLE " + tableName
