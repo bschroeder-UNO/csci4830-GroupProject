@@ -37,6 +37,8 @@ public class Home extends HttpServlet {
 	    PrintWriter out = response.getWriter();
 	    out.println("<html><head><title>Home</title></head><body>");
 	    out.println("<h2>Welcome, " + username + "</h2>");
+	    out.println("<a href='UpdateBudget'><button>Budget</button></a>");
+	    //out.println("<a href='Graphic'>View Data</a>");
 	    out.println("<a href='Login'>Logout</a>");
 	    out.println("</body></html>");
 		//response.getWriter().append("Served at: ").append(request.getContextPath());
