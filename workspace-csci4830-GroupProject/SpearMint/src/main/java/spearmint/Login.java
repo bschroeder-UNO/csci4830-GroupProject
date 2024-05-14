@@ -1,3 +1,4 @@
+package spearmint;
 
 
 import java.io.IOException;
@@ -21,7 +22,7 @@ public class Login extends HttpServlet {
 	//private static final String JDBC_USER = "bschroeder"
 	//private static final String JDBC_PASSWORD = "csci";
 	private static final String JDBC_URL = "jdbc:mysql://ec2-52-14-191-24.us-east-2.compute.amazonaws.com:3306/SPEARMINT";
-    private static final String JDBC_USER = "bschroeder_remote";
+    private static final String JDBC_USER = "bschroeder_remote"; 
     private static final String JDBC_PASSWORD = "csci4830";
        
     /**
@@ -97,7 +98,7 @@ public class Login extends HttpServlet {
 	    out.println("</html>");
     }
 
-    private boolean validateCredentials(String username, String password) {
+    public boolean validateCredentials(String username, String password) {
         try (Connection connection = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD);
              PreparedStatement statement = connection.prepareStatement("SELECT * FROM users WHERE username = ? AND password = ?")) {
 
