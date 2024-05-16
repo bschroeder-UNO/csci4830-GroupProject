@@ -148,16 +148,22 @@ public class CreateAccount extends HttpServlet {
 	}
 
 	public boolean createTransactionTable(String username) {
-		String tableName = "transactions_" + username;
-		try (Connection connection = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD);
-				Statement statement = connection.createStatement()) {
-			String createTableQuery = "CREATE TABLE " + tableName
-					+ " (id INT PRIMARY KEY, amount DECIMAL(10, 2), transaction_date TIMESTAMP)";
-			statement.executeUpdate(createTableQuery);
-			return true; // Table created successfully
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return false;
-		}
+	    String tableName = "transactions_" + username;
+	    try (Connection connection = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD);
+	         Statement statement = connection.createStatement()) {
+	        String createTableQuery = "CREATE TABLE " + tableName + " ("
+	                + "id INT PRIMARY KEY AUTO_INCREMENT, "
+	                + "amount DECIMAL(10, 2), "
+	                + "transaction_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP, "
+	                + "name VARCHAR(100), "
+	                + "type ENUM('BILLS', 'FOOD', 'ENTERTAINMENT', 'MISC', 'TRANSPORTATION', 'HEALTHCARE', 'EDUCATION', 'OTHER')"
+	                + ")";
+	        statement.executeUpdate(createTableQuery);
+	        return true; // Table created successfully
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	        return false;
+	    }
 	}
+
 }
