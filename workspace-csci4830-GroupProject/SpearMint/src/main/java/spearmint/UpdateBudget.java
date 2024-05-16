@@ -19,7 +19,7 @@ public class UpdateBudget extends HttpServlet {
     private static final String JDBC_PASSWORD = "csci4830";
 
     // Method to get the current budget from the database
-    private double getCurrentBudget(String username) throws SQLException {
+    public static double getCurrentBudget(String username) throws SQLException {
         double budget = 0.0;
         try (Connection connection = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD)) {
             String query = "SELECT budget FROM users WHERE username = ?";

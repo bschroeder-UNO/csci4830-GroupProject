@@ -24,6 +24,11 @@ public class Home extends HttpServlet {
         PrintWriter out = response.getWriter();
         out.println("<html><head><title>Home</title></head><body>");
         out.println("<h2>Welcome, " + username + "</h2>");
+        out.println("<form action='ViewBudget' method='POST'>"
+                + "    <input type='hidden' name='username' value='" + username + "'>"
+                + "    <button type='submit'>View Budget</button>"
+                + "</form>"
+                + "");
         out.println("<form action='UpdateBudget' method='POST'>"
                 + "    <input type='hidden' name='username' value='" + username + "'>"
                 + "    <button type='submit'>Update Budget</button>"
