@@ -1,6 +1,5 @@
 package spearmint;
 
-
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -9,16 +8,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Servlet implementation class AddCSV
+ * Servlet implementation class ViewBudget
  */
-@WebServlet("/AddCSV")
-public class AddCSV extends HttpServlet {
+@WebServlet("/ViewBudget")
+public class ViewBudget extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-
+       
     /**
-     * Default constructor. 
+     * @see HttpServlet#HttpServlet()
      */
-    public AddCSV() {
+    public ViewBudget() {
+        super();
         // TODO Auto-generated constructor stub
     }
 
