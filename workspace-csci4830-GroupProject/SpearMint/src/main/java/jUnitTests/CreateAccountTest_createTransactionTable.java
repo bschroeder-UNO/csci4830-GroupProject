@@ -3,7 +3,6 @@ package jUnitTests;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
 import spearmint.CreateAccount;
 
 import static org.junit.Assert.*;
@@ -17,6 +16,7 @@ public class CreateAccountTest_createTransactionTable {
     private static final String JDBC_PASSWORD = "csci4830";
 
     private CreateAccount createAccount;
+    private String testTableName = "transactions_testuser";
 
     @Before
     public void setUp() throws SQLException {
@@ -28,19 +28,19 @@ public class CreateAccountTest_createTransactionTable {
         // Cleanup after the tests
         try (Connection connection = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD);
              Statement statement = connection.createStatement()) {
-            statement.executeUpdate("DROP TABLE IF EXISTS transactions_1");
+            statement.executeUpdate("DROP TABLE IF EXISTS " + testTableName);
         }
     }
 
     @Test
     public void testCreateTransactionTable_Success() {
-        boolean result = createAccount.createTransactionTable(1);
+        boolean result = createAccount.createTransactionTable("testuser");
         assertTrue(result);
 
         // Verify that the table was created
         try (Connection connection = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD);
              Statement statement = connection.createStatement();
-             ResultSet resultSet = statement.executeQuery("SHOW TABLES LIKE 'transactions_1'")) {
+             ResultSet resultSet = statement.executeQuery("SHOW TABLES LIKE '" + testTableName + "'")) {
             assertTrue(resultSet.next());
         } catch (SQLException e) {
             e.printStackTrace();
@@ -50,11 +50,11 @@ public class CreateAccountTest_createTransactionTable {
 
     @Test
     public void testCreateTransactionTable_Failure() {
-        boolean result = createAccount.createTransactionTable(1);
+        boolean result = createAccount.createTransactionTable("testuser");
         assertTrue(result);
 
         // Try to create the table again, which should fail
-        boolean secondResult = createAccount.createTransactionTable(1);
+        boolean secondResult = createAccount.createTransactionTable("testuser");
         assertFalse(secondResult);
     }
 }

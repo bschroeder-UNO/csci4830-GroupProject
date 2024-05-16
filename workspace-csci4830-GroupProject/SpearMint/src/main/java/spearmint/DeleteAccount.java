@@ -6,7 +6,6 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
-
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -24,6 +23,7 @@ public class DeleteAccount extends HttpServlet {
         super();
     }
 
+    @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String htmlResponse = "<!DOCTYPE html>"
@@ -38,6 +38,7 @@ public class DeleteAccount extends HttpServlet {
         response.getWriter().write(htmlResponse);
     }
 
+    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String username = request.getParameter("username");
@@ -50,18 +51,29 @@ public class DeleteAccount extends HttpServlet {
         try {
             if (deleteUserAndTransactionTable(username)) {
                 response.setStatus(HttpServletResponse.SC_OK);
-                response.getWriter().write("Account deleted successfully. <a href='login.html'>Click here to login</a>");
+                String htmlResponse = "<!DOCTYPE html>"
+                        + "<html><head><title>Account Deleted</title></head><body>"
+                        + "Account deleted successfully. <a href='Login'>Click here to login</a>"
+                        + "</body></html>";
+                response.getWriter().write(htmlResponse);
             } else {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                response.getWriter().write("Account deletion failed");
+                String htmlResponse = "<!DOCTYPE html>"
+                        + "<html><head><title>Account Deletion Failed</title></head><body>"
+                        + "Account deletion failed."
+                        + "</body></html>";
+                response.getWriter().write(htmlResponse);
             }
         } catch (SQLException e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            response.getWriter().write("Error during account deletion: " + e.getMessage());
+            String htmlResponse = "<!DOCTYPE html>"
+                    + "<html><head><title>Error</title></head><body>"
+                    + "Error during account deletion: " + e.getMessage()
+                    + "</body></html>";
+            response.getWriter().write(htmlResponse);
             e.printStackTrace();
         }
     }
-
 
     private boolean deleteUserAndTransactionTable(String username) throws SQLException {
         try (Connection connection = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD)) {

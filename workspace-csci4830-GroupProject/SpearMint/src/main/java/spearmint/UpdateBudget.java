@@ -36,7 +36,7 @@ public class UpdateBudget extends HttpServlet {
     }
 
     // Method to update the budget
-    private void updateBudget(String username, double newBudget) throws SQLException {
+    public void updateBudget(String username, double newBudget) throws SQLException {
         String sql = "UPDATE users SET budget = ? WHERE username = ?";
         try (Connection connection = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD);
              PreparedStatement pstmt = connection.prepareStatement(sql)) {
